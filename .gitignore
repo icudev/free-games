@@ -1,0 +1,11 @@
+# Rust
+Cargo.lock
+*/target/*
+
+# RustRover
+.idea
+*~
+
+# Project
+.env
+*.log

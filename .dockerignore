@@ -1,0 +1,13 @@
+# Rust
+*/target/*
+
+# RustRover
+.idea
+*~
+
+# Project
+.env
+*.log
+README.md
+.gitignore
+.git

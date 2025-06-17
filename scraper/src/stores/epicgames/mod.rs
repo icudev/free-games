@@ -26,7 +26,10 @@ impl Store for EpicGamesStore {
             Ok(res) => {
                 let text = res.text().await.unwrap_or_default();
 
-                let api_response: ApiResponse = serde_json::from_str(text.as_str()).unwrap();
+                let api_response: ApiResponse = match serde_json::from_str(text.as_str()) {
+                    Ok(res) => res,
+                    Err(e) => return vec![],
+                };
                 let eg_games = api_response.data.catalog.search_store.elements;
 
                 let mut free_games = Vec::with_capacity(eg_games.len());
@@ -95,16 +98,22 @@ impl Store for EpicGamesStore {
                                 break;
                             }
                         }
-                        if game_url.is_none() {
-                            continue;
-                        }
                     }
+                    let game_page_url = match game_url {
+                        Some(url) => url,
+                        None => continue,
+                    };
 
                     let offer_until = {
                         let offer_until_fmt = current_promotional_offer.end_date.clone();
-                        NaiveDate::parse_from_str(
-                            offer_until_fmt.get(0..10).unwrap(), "%Y-%m-%d"
-                        ).unwrap()
+                        let naive_data_string = match offer_until_fmt.get(0..10) {
+                            Some(date) => date,
+                            None => continue,
+                        };
+                        match NaiveDate::parse_from_str(naive_data_string, "%Y-%m-%d") {
+                            Ok(date) => date,
+                            Err(_) => continue,
+                        }
                     };
 
                     free_games.push(Game {
@@ -112,7 +121,7 @@ impl Store for EpicGamesStore {
                         store: GameStore::EpicGames,
                         title: game.title.clone(),
                         identifier: make_identifier(game.title.clone()),
-                        url: game_url.unwrap(),
+                        url: game_page_url,
                         original_price: game.price.total_price.fmt_price.original_price.clone(),
                         offer_until,
                         game_type: game.offer_type,

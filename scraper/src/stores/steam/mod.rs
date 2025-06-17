@@ -42,7 +42,10 @@ impl Store for SteamStore {
             let document = Html::parse_document(&html);
 
             for element in document.select(&search_result_selector) {
-                let discount_pct = element.select(&game_discount_selector).next().unwrap();
+                let discount_pct = match element.select(&game_discount_selector).next() {
+                    Some(discount_pct) => discount_pct,
+                    None => continue,
+                };
 
                 if discount_pct.inner_html().as_str() != "-100%" {
                     continue;
@@ -65,10 +68,13 @@ impl Store for SteamStore {
         let mut free_games = Vec::with_capacity(game_urls.len());
 
         for url in game_urls {
-            let id = steam_url_regex
+            let id = match steam_url_regex
                 .captures(url.as_str())
-                .map(|captures| captures[1].to_string())
-                .unwrap();
+                .map(|captures| captures[1].to_string()) 
+            {
+                Some(id) => id,
+                None => continue,
+            };
 
             let partial_game = PartialGame {
                 id: id.clone(),
@@ -155,8 +161,7 @@ async fn parse_game_page(http: &Client, url: &Url) -> Option<Game> {
         // that that offer would be in the past because of it we just add one to the current year.
         if offer_until < chrono::Utc::now().date_naive() {
             offer_until =
-                NaiveDate::from_ymd_opt(this_year + 1, offer_until.month(), offer_until.day())
-                    .unwrap();
+                NaiveDate::from_ymd_opt(this_year + 1, offer_until.month(), offer_until.day())?;
         };
         offer_until
     };

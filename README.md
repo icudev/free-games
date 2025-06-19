@@ -1,6 +1,6 @@
 ## Free Games Bot
-An automated bot for X/Twitter that posts free games on [Steam](https://store.steampowered.com/) and 
-[Epic Games](https://store.epicgames.com/de/).<br>
+An automated bot for X/Twitter that posts free games on [Steam](https://store.steampowered.com/), 
+[Epic Games](https://store.epicgames.com/en/) and [GOG](https://www.gog.com/en/).<br>
 It currently checks the stores in an interval of 10 minutes and posts them if they're not already posted.
 
 ## Setup using [Docker](https://www.docker.com/)

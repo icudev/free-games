@@ -19,6 +19,7 @@ pub fn make_text(game: &Game) -> String {
             hashtags.push("#SteamDeals".to_string());
         },
         GameStore::EpicGames => {},
+        GameStore::Gog => {},
         GameStore::Unknown => {},
     }
 

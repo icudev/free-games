@@ -1,10 +1,8 @@
 use reqwest::Client;
 use utils::internal_api::{wait_for_internal_api, InternalApi};
-use crate::stores::{EpicGamesStore, SteamStore, Store};
+use crate::stores::{EpicGamesStore, GogStore, SteamStore, Store};
 
 mod stores;
-
-
 
 const INTERVAL: u64 = 600;
 
@@ -23,6 +21,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let stores: Vec<Box<dyn Store>> = vec![
         Box::new(EpicGamesStore),
+        Box::new(GogStore),
         Box::new(SteamStore),
     ];
 

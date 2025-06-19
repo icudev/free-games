@@ -26,6 +26,8 @@ pub enum GameStore {
     Steam,
     #[serde(rename = "EpicGames")]
     EpicGames,
+    #[serde(rename = "GOG")]
+    Gog,
     #[serde(other)]
     Unknown,
 }
@@ -35,6 +37,7 @@ impl fmt::Display for GameStore {
         match self {
             GameStore::Steam => write!(f, "Steam"),
             GameStore::EpicGames => write!(f, "EpicGames"),
+            GameStore::Gog => write!(f, "GOG"),
             GameStore::Unknown => write!(f, "Unknown"),
         }
     }
@@ -45,6 +48,7 @@ impl From<String> for GameStore {
         match s.to_lowercase().as_str() {
             "steam" => GameStore::Steam,
             "epicgames" => GameStore::EpicGames,
+            "gog" => GameStore::Gog,
             _ => GameStore::Unknown,
         }
     }

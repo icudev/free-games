@@ -42,8 +42,11 @@ where D: DeserializeOwned
 }
 
 fn make_identifier(mut name: String) -> String {
-    let identifier_regex = Regex::new(r"[^\p{L}\s]").unwrap();
+    let identifier_regex = Regex::new(r"[^\p{N}\p{L}\s]").unwrap();
 
     name = identifier_regex.replace_all(&name, "").to_string();
-    name.replace(' ', "_")
+    name = name.replace(' ', "_");
+    
+    let underscore_collapse = Regex::new(r"_+").unwrap();
+    underscore_collapse.replace_all(&name, "_").to_string()
 }

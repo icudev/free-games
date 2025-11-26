@@ -5,9 +5,8 @@ use chrono::NaiveDate;
 use regex::Regex;
 use reqwest::{Client, Url};
 use reqwest::header::{HeaderMap, COOKIE};
-use scraper::{Html, Selector};
 use utils::internal_api::InternalApi;
-use utils::model::{Game, GameStore, GameType, PartialGame};
+use utils::model::{Game, GameStore, PartialGame};
 use crate::stores::{make_api_request, make_identifier, make_request, Store};
 
 pub struct GogStore;
@@ -30,6 +29,8 @@ impl Store for GogStore {
         
         let games = api_response.products;
         let mut free_games = Vec::with_capacity(games.len());
+        
+        let offer_until_regex = Regex::new(r#"window.productcardData.cardProductPromoEndDate\s*=\s*\{\"date\":\"(\d{4}-\d{2}-\d{2})"#).unwrap();
         
         for game in games {
             tokio::time::sleep(tokio::time::Duration::from_secs(1)).await;
@@ -61,10 +62,8 @@ impl Store for GogStore {
                     let Ok(html) = response.text().await else {
                         continue;
                     };
-                    
-                    let regex = Regex::new(r#"window.productcardData.cardProductPromoEndDate\s*=\s*\{\"date\":\"(\d{4}-\d{2}-\d{2})"#).unwrap();
 
-                    let Some(captures) = regex.captures(&html) else {
+                    let Some(captures) = offer_until_regex.captures(&html) else {
                         log::error!("Couldn\'t find offer_until on page {store_link}");
                         continue;
                     };

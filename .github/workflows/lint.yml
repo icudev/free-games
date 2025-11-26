@@ -1,0 +1,39 @@
+name: Rust Lint
+
+on:
+  push:
+    paths:
+      - api/src/**
+      - bot/src/**
+      - scraper/src/**
+      - utils/src/**
+    branches: [ master ]
+  pull_request:
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  Lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Lint api
+        working-directory: api
+        run: cargo clippy --all -- -D warnings
+
+      - name: Lint bot
+        working-directory: bot
+        run: cargo clippy --all -- -D warnings
+
+      - name: Lint scraper
+        working-directory: scraper
+        run: cargo clippy --all -- -D warnings
+
+      - name: Lint utils
+        working-directory: utils
+        run: cargo clippy --all -- -D warnings

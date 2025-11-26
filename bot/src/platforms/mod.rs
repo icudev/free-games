@@ -33,3 +33,52 @@ pub fn make_text(game: &Game) -> String {
         hashtags.join(" "),
     )
 }
+
+#[cfg(test)]
+mod tests {
+    use chrono::NaiveDate;
+    use super::*;
+    use utils::model::GameType;
+
+    #[test]
+    fn test_game() {
+        assert_eq!(
+            make_text(&Game {
+                id: "unique_id".to_string(),
+                store: GameStore::Steam,
+                title: "The Game".to_string(),
+                identifier: "The_Game".to_string(),
+                url: "https://icudev.xyz/the_game".to_string(),
+                original_price: "$19.99".to_string(),
+                offer_until: NaiveDate::from_ymd_opt(2025, 6, 15).unwrap(),
+                game_type: GameType::Game,
+            }),
+            r#"[ Game ] "The Game" is currently free on #Steam until 2025-06-15.
+
+https://icudev.xyz/the_game
+
+#FreeGames #The_Game #SteamDeals"#
+        );
+    }
+
+    #[test]
+    fn test_dlc() {
+        assert_eq!(
+            make_text(&Game {
+                id: "unique_dlc_id".to_string(),
+                store: GameStore::Steam,
+                title: "The Game: The DLC".to_string(),
+                identifier: "The_Game_The_DLC".to_string(),
+                url: "https://icudev.xyz/the_game_the_dlc".to_string(),
+                original_price: "$9.99".to_string(),
+                offer_until: NaiveDate::from_ymd_opt(2025, 6, 15).unwrap(),
+                game_type: GameType::Dlc,
+            }),
+            r#"[ DLC ] "The Game: The DLC" is currently free on #Steam until 2025-06-15.
+
+https://icudev.xyz/the_game_the_dlc
+
+#FreeGames #The_Game_The_DLC #SteamDeals"#
+        );
+    }
+}

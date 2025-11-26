@@ -50,3 +50,40 @@ fn make_identifier(mut name: String) -> String {
     let underscore_collapse = Regex::new(r"_+").unwrap();
     underscore_collapse.replace_all(&name, "_").to_string()
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_basic() {
+        assert_eq!(
+            make_identifier("The Game: Continuation".to_string()),
+            "The_Game_Continuation"
+        );
+    }
+
+    #[test]
+    fn test_multiple_whitespaces() {
+        assert_eq!(
+            make_identifier("The  Game".to_string()),
+            "The_Game"
+        );
+    }
+
+    #[test]
+    fn test_dashes() {
+        assert_eq!(
+            make_identifier("The - Game".to_string()),
+            "The_Game"
+        );
+    }
+
+    #[test]
+    fn test_all_together() {
+        assert_eq!(
+            make_identifier("The Game™: The Return Of 2 - All Cosmetics".to_string()),
+            "The_Game_The_Return_Of_2_All_Cosmetics"
+        );
+    }
+}
